@@ -1,2 +1,3 @@
 # gitsome
-yolosint! github API enumerator
+yolosint - GitHub API Edition
+by savant42
