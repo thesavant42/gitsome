@@ -98,7 +98,7 @@ data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -s -d @- https://api.gith
               }
             }
           }
-          gists(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
+          gists(last: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
             totalCount      
             edges {
           node {
@@ -136,7 +136,7 @@ data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -s -d @- https://api.gith
         }
       }
       forkCount
-      refs(last: 100, refPrefix:\"refs/heads/\") {
+      refs(last: 25, refPrefix:\"refs/heads/\") {
         totalCount
         pageInfo {
           hasNextPage
@@ -186,7 +186,7 @@ data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -s -d @- https://api.gith
         }
       }
       stargazerCount
-      stargazers(last: 100){
+      stargazers(last: 10){
         totalCount
         nodes {
           name
@@ -212,8 +212,33 @@ cat << "EOF"
  | (_| | | |_\__ \ (_) | | | | | |  __/
   \__, |_|\__|___/\___/|_| |_| |_|\___|
   |___/                                
-by savant42
-EOF
-echo -e "gitSome - gitHub Info Enumerator, by savant42 - $(date)\n"
+   - gitHub Info Enumerator, by savant42
 
-echo $data | jq '.'
+Repository Enumeration Module
+EOF
+
+# Get Basic Repo Infos
+echo -e "
+[+] Repository: $REPONAME
+Owner: $OWNER
+"
+
+jq -r '.data.repository |"
+Name (with Owner): \(.nameWithOwner)
+ID: \(.id)
+Description: \(.description)
+URL: \(.url)
+Homepage: \(.homepageUrl)
+Mirror URL: \(.mirrorUrl)
+Projects URL: \(.projectsUrl)
+Projects Count: \(.projects.totalCount)
+"' <<<$data
+
+echo -e "Assignable Users: $(jq -r .data.repository.assignableUsers.totalCount <<<$data)"
+
+# assignableUsers
+jq -r '.data.repository.assignableUsers.nodes[]|
+"Assignable User Login: \(.login)", 
+"Assignable User Gists:", "\(.gists.edges[].node| "Name: \(.name)", "URL: \(.url)", "Description: \(.description)", "")",
+""
+' <<<$data
