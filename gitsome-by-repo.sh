@@ -266,9 +266,11 @@ jq -r '.data.repository.assignableUsers.nodes[]|
   "URL: \(.url)", 
   "Description: \(.description)", 
   "Files: \(.files[]|
-  "Filename: \(.encodedName)", 
-  "Language: \(.language.name)", 
-  "Size: \(.size)")")",
+    "Filename: \(.encodedName)", 
+    "Language: \(.language.name)", 
+    "Size: \(.size)\n"
+  )"
+)",
   "\nAssignable User Top Repositories - \(.login):", 
     "\(.topRepositories.edges[].node| 
       "\n[+] Top Repository Name: \(.name)", 
@@ -277,12 +279,12 @@ jq -r '.data.repository.assignableUsers.nodes[]|
 
 
 # Pull Requests
-echo -e "\n[+] Pull Requests: $(jq -r .data.repository.pullRequests.totalCount <<<$data)"
+echo -e "\n[*] Pull Requests: $(jq -r .data.repository.pullRequests.totalCount <<<$data)\n"
 jq -r '.data.repository.pullRequests.nodes[]| 
+"[+] PR Permalink: \(.permalink)",
 "PR Author Login: \(.author.login)", 
 "Author URL: \(.author.url)", 
 "PR Body Text: \n\(.bodyText)\n",
-"PR Permalink: \(.permalink)",
 "---", 
 ""
 ' <<<$data
